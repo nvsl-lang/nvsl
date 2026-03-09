@@ -57,7 +57,7 @@ nvsl_archive_zip() {
     local archive_win
     bundle_win="$(cygpath -w "$dist_dir/$bundle_name")"
     archive_win="$(cygpath -w "$archive_path")"
-    powershell.exe -NoLogo -NoProfile -Command "Compress-Archive -Path '$bundle_win\\*' -DestinationPath '$archive_win' -Force" >/dev/null
+    powershell.exe -NoLogo -NoProfile -Command "Compress-Archive -Path '$bundle_win' -DestinationPath '$archive_win' -Force" >/dev/null
     return 0
   fi
 
