@@ -8,6 +8,7 @@ This file documents the current `NVSL` tooling surface.
 - `nvslc`: source-to-bytecode compiler
 - `NVBC`: bytecode format
 - `nvslvm`: bytecode runtime
+- `./nvsl`: convenience wrapper for build, run, check, and sample validation
 
 ## Build Files
 
@@ -16,6 +17,58 @@ Current Haxe build files:
 - [build.script.hxml](../../../../build.script.hxml)
 - [build.nvslc.hxml](../../../../build.nvslc.hxml)
 - [build.nvslvm.hxml](../../../../build.nvslvm.hxml)
+
+## Simple Wrapper Commands
+
+Repo-root helper scripts:
+
+- [../../../../install.sh](../../../../install.sh): Linux toolchain install plus local build
+- [../../../../nvsl](../../../../nvsl): convenience command
+- [../../../../nvslc](../../../../nvslc): wrapper for the compiler
+- [../../../../nvslvm](../../../../nvslvm): wrapper for the VM
+- [../../../../scripts/build-tools.sh](../../../../scripts/build-tools.sh): build local `.hl` tools
+
+Recommended source checkout flow:
+
+```bash
+./install.sh
+./nvsl run path/to/scripts --entry game.app.main
+```
+
+If you already have Haxe and HashLink:
+
+```bash
+./scripts/build-tools.sh
+./nvslc path/to/scripts bin/game.nvbc --entry game.app.main
+./nvslvm bin/game.nvbc
+```
+
+The wrapper scripts auto-build `bin/nvslc.hl` and `bin/nvslvm.hl` when needed.
+
+## `./nvsl`
+
+Purpose:
+
+- compile and run source projects with one command
+- validate source projects without keeping output
+- forward to the VM path for existing `.nvbc` files
+- run the bundled sample suite
+
+Usage:
+
+```bash
+./nvsl build <source-path> <output.nvbc> [--entry module.export] [--extension .nvsl]
+./nvsl run <source-path|program.nvbc> [--entry module.export] [--extension .nvsl] [--out output.nvbc]
+./nvsl check <source-path> [--entry module.export] [--extension .nvsl]
+./nvsl vm <program.nvbc> [module.export]
+./nvsl samples
+```
+
+Notes:
+
+- `<source-path>` may be a directory or a single `.nvsl` file
+- `./nvsl run` compiles to a temporary `.nvbc` unless `--out` is provided
+- source runs usually need `--entry` unless the project already stores a default entrypoint
 
 ## `nvslc`
 
@@ -47,7 +100,7 @@ Arguments:
 Example:
 
 ```bash
-hl bin/nvslc.hl game/scripts bin/game.nvbc --entry game.app.main
+./nvslc game/scripts bin/game.nvbc --entry game.app.main
 ```
 
 ## `nvslvm`
@@ -77,10 +130,10 @@ Arguments:
 Example:
 
 ```bash
-hl bin/nvslvm.hl bin/game.nvbc game.app.main
+./nvslvm bin/game.nvbc game.app.main
 ```
 
-If `hl` is not on your `PATH`, replace it with the full path to your HashLink binary.
+If `hl` is not on your `PATH`, the wrappers also respect `HL=/path/to/hl`.
 
 If the second argument is omitted, `nvslvm` uses the program default entrypoint.
 
@@ -139,7 +192,7 @@ Runnable sample projects and edge cases live in:
 Quick checker:
 
 ```bash
-./src/novel/script/samples/check-samples.sh
+./nvsl samples
 ```
 
 ## Current Limits

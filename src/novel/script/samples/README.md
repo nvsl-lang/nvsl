@@ -15,10 +15,10 @@ Use the checker script in this folder:
 ./samples/check-samples.sh
 ```
 
-Or from the current monorepo root:
+Or from the repo root:
 
 ```bash
-./src/novel/script/samples/check-samples.sh
+./nvsl samples
 ```
 
 That script:

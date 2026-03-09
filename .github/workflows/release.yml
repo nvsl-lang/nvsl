@@ -20,20 +20,26 @@ jobs:
       - name: Install Haxe and HashLink
         run: ./scripts/install-linux-toolchain.sh
 
-      - name: Build nvslc
-        run: haxe build.nvslc.hxml
-
-      - name: Build nvslvm
-        run: haxe build.nvslvm.hxml
+      - name: Build local tools
+        run: ./scripts/build-tools.sh
 
       - name: Package release artifacts
         run: |
           mkdir -p dist
+          mkdir -p dist/bin
           cp README.md dist/
           cp LICENSE dist/
-          cp bin/nvslc.hl dist/
-          cp bin/nvslvm.hl dist/
-          tar -czf dist/nvsl-tools-linux.tar.gz -C dist README.md LICENSE nvslc.hl nvslvm.hl
+          cp install.sh dist/
+          cp nvsl dist/
+          cp nvslc dist/
+          cp nvslvm dist/
+          mkdir -p dist/scripts
+          cp scripts/build-tools.sh dist/scripts/
+          cp scripts/install-linux-toolchain.sh dist/scripts/
+          cp scripts/nvsl-env.sh dist/scripts/
+          cp bin/nvslc.hl dist/bin/
+          cp bin/nvslvm.hl dist/bin/
+          tar -czf dist/nvsl-tools-linux.tar.gz -C dist README.md LICENSE install.sh nvsl nvslc nvslvm scripts bin
 
       - name: Upload workflow artifacts
         uses: actions/upload-artifact@v4
@@ -41,8 +47,8 @@ jobs:
           name: nvsl-tools-linux
           path: |
             dist/nvsl-tools-linux.tar.gz
-            bin/nvslc.hl
-            bin/nvslvm.hl
+            dist/bin/nvslc.hl
+            dist/bin/nvslvm.hl
 
       - name: Publish GitHub release
         if: startsWith(github.ref, 'refs/tags/')
@@ -50,5 +56,5 @@ jobs:
         with:
           files: |
             dist/nvsl-tools-linux.tar.gz
-            bin/nvslc.hl
-            bin/nvslvm.hl
+            dist/bin/nvslc.hl
+            dist/bin/nvslvm.hl

@@ -25,42 +25,51 @@ The toolchain is written in Haxe, so it can be embedded anywhere Haxe targets ru
 
 ## Quick Start
 
-Build the compiler:
+Install the Linux toolchain and build the local tools:
 
 ```bash
-haxe build.nvslc.hxml
+./install.sh
 ```
 
-Build the VM:
+Compile and run a source project in one command:
 
 ```bash
-haxe build.nvslvm.hxml
+./nvsl run path/to/scripts --entry game.app.main
 ```
 
-Compile a script directory into bytecode:
+Compile a source project into bytecode:
 
 ```bash
-hl bin/nvslc.hl path/to/scripts bin/game.nvbc --entry game.app.main
+./nvslc path/to/scripts bin/game.nvbc --entry game.app.main
 ```
 
 Run compiled bytecode:
 
 ```bash
-hl bin/nvslvm.hl bin/game.nvbc
+./nvslvm bin/game.nvbc
 ```
 
 Run a specific entrypoint:
 
 ```bash
-hl bin/nvslvm.hl bin/game.nvbc game.app.main
+./nvslvm bin/game.nvbc game.app.main
 ```
 
-If `hl` is not on your `PATH`, replace it with the full path to your HashLink binary.
+The wrapper scripts auto-build `nvslc` and `nvslvm` if the local `bin/` outputs are missing or stale.
+
+If you want the raw underlying commands, they are still:
+
+```bash
+haxe build.nvslc.hxml
+haxe build.nvslvm.hxml
+hl bin/nvslc.hl path/to/scripts bin/game.nvbc --entry game.app.main
+hl bin/nvslvm.hl bin/game.nvbc
+```
 
 Run the bundled samples:
 
 ```bash
-./src/novel/script/samples/check-samples.sh
+./nvsl samples
 ```
 
 ## Automation
@@ -72,6 +81,13 @@ This repo includes GitHub Actions for:
 - tagged releases that attach `nvslc.hl` and `nvslvm.hl` build artifacts
 
 The workflows install Haxe and HashLink on Linux before running the build and sample checks.
+
+## Main Commands
+
+- [install.sh](./install.sh): install Linux dependencies and build the tools
+- [nvsl](./nvsl): convenience wrapper for build, run, check, and sample validation
+- [nvslc](./nvslc): wrapper for the bytecode compiler
+- [nvslvm](./nvslvm): wrapper for the bytecode VM
 
 ## Main Entry Points
 

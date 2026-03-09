@@ -21,11 +21,8 @@ jobs:
       - name: Build script smoke test
         run: haxe build.script.hxml
 
-      - name: Build nvslc
-        run: haxe build.nvslc.hxml
-
-      - name: Build nvslvm
-        run: haxe build.nvslvm.hxml
+      - name: Build local tools
+        run: ./scripts/build-tools.sh
 
       - name: Run sample suite
-        run: ./src/novel/script/samples/check-samples.sh
+        run: ./nvsl samples

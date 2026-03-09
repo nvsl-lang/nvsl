@@ -1,0 +1,230 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$ROOT/scripts/nvsl-env.sh"
+
+usage() {
+  cat <<'EOF'
+usage:
+  ./nvsl build <source-path> <output.nvbc> [--entry module.export] [--extension .nvsl]
+  ./nvsl run <source-path|program.nvbc> [--entry module.export] [--extension .nvsl] [--out output.nvbc]
+  ./nvsl check <source-path> [--entry module.export] [--extension .nvsl]
+  ./nvsl vm <program.nvbc> [module.export]
+  ./nvsl samples
+
+notes:
+  - <source-path> may be a directory or a single .nvsl file
+  - running a source path compiles to a temporary .nvbc file unless --out is provided
+  - source runs usually need --entry unless the compiled project already stores a default entrypoint
+EOF
+}
+
+require_value() {
+  local flag="$1"
+  local value="${2:-}"
+  if [[ -z "$value" ]]; then
+    echo "Missing value after $flag." >&2
+    exit 1
+  fi
+}
+
+resolve_source_dir() {
+  local input="$1"
+  if [[ -d "$input" ]]; then
+    printf '%s\n' "$input"
+    return
+  fi
+
+  if [[ -f "$input" ]]; then
+    printf '%s\n' "$(dirname "$input")"
+    return
+  fi
+
+  echo "Source path '$input' does not exist." >&2
+  exit 1
+}
+
+run_source_project() {
+  local input="$1"
+  shift
+
+  local entry=""
+  local extension=".nvsl"
+  local output=""
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --entry)
+        require_value "$1" "${2:-}"
+        entry="$2"
+        shift 2
+        ;;
+      --extension)
+        require_value "$1" "${2:-}"
+        extension="$2"
+        shift 2
+        ;;
+      --out)
+        require_value "$1" "${2:-}"
+        output="$2"
+        shift 2
+        ;;
+      *)
+        echo "Unknown option '$1' for ./nvsl run." >&2
+        usage
+        exit 1
+        ;;
+    esac
+  done
+
+  if [[ -f "$input" && "$input" == *.nvbc ]]; then
+    if [[ "$extension" != ".nvsl" || -n "$output" ]]; then
+      echo "Do not pass --extension or --out when running an existing .nvbc file." >&2
+      exit 1
+    fi
+
+    if [[ -n "$entry" ]]; then
+      exec "$NVSL_ROOT/nvslvm" "$input" "$entry"
+    fi
+
+    exec "$NVSL_ROOT/nvslvm" "$input"
+  fi
+
+  local source_dir
+  source_dir="$(resolve_source_dir "$input")"
+
+  local cleanup_tmp=0
+  local bytecode_path="$output"
+  local tmp_dir=""
+  if [[ -z "$bytecode_path" ]]; then
+    tmp_dir="$(mktemp -d /tmp/nvsl-run.XXXXXX)"
+    cleanup_tmp=1
+    bytecode_path="$tmp_dir/program.nvbc"
+  fi
+
+  local compile_args=("$source_dir" "$bytecode_path")
+  if [[ -n "$entry" ]]; then
+    compile_args+=("--entry" "$entry")
+  fi
+  if [[ "$extension" != ".nvsl" ]]; then
+    compile_args+=("--extension" "$extension")
+  fi
+
+  "$NVSL_ROOT/nvslc" "${compile_args[@]}"
+
+  if [[ -n "$entry" ]]; then
+    if [[ $cleanup_tmp -eq 1 ]]; then
+      "$NVSL_ROOT/nvslvm" "$bytecode_path" "$entry"
+      local status=$?
+      rm -rf "$tmp_dir"
+      return $status
+    fi
+
+    exec "$NVSL_ROOT/nvslvm" "$bytecode_path" "$entry"
+  fi
+
+  if [[ $cleanup_tmp -eq 1 ]]; then
+    "$NVSL_ROOT/nvslvm" "$bytecode_path"
+    local status=$?
+    rm -rf "$tmp_dir"
+    return $status
+  fi
+
+  exec "$NVSL_ROOT/nvslvm" "$bytecode_path"
+}
+
+check_source_project() {
+  local input="$1"
+  shift
+
+  local entry=""
+  local extension=".nvsl"
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --entry)
+        require_value "$1" "${2:-}"
+        entry="$2"
+        shift 2
+        ;;
+      --extension)
+        require_value "$1" "${2:-}"
+        extension="$2"
+        shift 2
+        ;;
+      *)
+        echo "Unknown option '$1' for ./nvsl check." >&2
+        usage
+        exit 1
+        ;;
+    esac
+  done
+
+  local source_dir
+  source_dir="$(resolve_source_dir "$input")"
+
+  local tmp_dir
+  tmp_dir="$(mktemp -d /tmp/nvsl-check.XXXXXX)"
+
+  local compile_args=("$source_dir" "$tmp_dir/program.nvbc")
+  if [[ -n "$entry" ]]; then
+    compile_args+=("--entry" "$entry")
+  fi
+  if [[ "$extension" != ".nvsl" ]]; then
+    compile_args+=("--extension" "$extension")
+  fi
+
+  "$NVSL_ROOT/nvslc" "${compile_args[@]}" >/dev/null
+  rm -rf "$tmp_dir"
+  echo "NVSL check passed for $source_dir"
+}
+
+command_name="${1:-help}"
+if [[ $# -gt 0 ]]; then
+  shift
+fi
+
+case "$command_name" in
+  build|compile)
+    if [[ $# -lt 2 ]]; then
+      usage
+      exit 1
+    fi
+    source_dir="$(resolve_source_dir "$1")"
+    shift
+    exec "$NVSL_ROOT/nvslc" "$source_dir" "$@"
+    ;;
+  run)
+    if [[ $# -lt 1 ]]; then
+      usage
+      exit 1
+    fi
+    run_source_project "$@"
+    ;;
+  check)
+    if [[ $# -lt 1 ]]; then
+      usage
+      exit 1
+    fi
+    check_source_project "$@"
+    ;;
+  vm)
+    if [[ $# -lt 1 ]]; then
+      usage
+      exit 1
+    fi
+    exec "$NVSL_ROOT/nvslvm" "$@"
+    ;;
+  samples)
+    exec "$NVSL_ROOT/src/novel/script/samples/check-samples.sh"
+    ;;
+  help|-h|--help)
+    usage
+    ;;
+  *)
+    echo "Unknown command '$command_name'." >&2
+    usage
+    exit 1
+    ;;
+esac

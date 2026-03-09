@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$ROOT/scripts/nvsl-env.sh"
+
+nvsl_ensure_tool nvslc
+exec "$NVSL_HL" "$NVSL_ROOT/bin/nvslc.hl" "$@"
