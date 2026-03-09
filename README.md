@@ -25,7 +25,7 @@ The toolchain is written in Haxe, so it can be embedded anywhere Haxe targets ru
 
 ## Quick Start
 
-See [INSTALL.md](./INSTALL.md) for full install and run instructions.
+See [INSTALL.md](./INSTALL.md) for full install and run instructions across Linux, Windows, and macOS.
 
 From source on Linux:
 
@@ -33,13 +33,19 @@ From source on Linux:
 ./install.sh
 ```
 
-From a Linux release bundle:
+From a release bundle:
 
 ```bash
 ./nvsl run path/to/scripts --entry game.app.main
 ```
 
-The Linux release bundle includes `bin/hl`, `bin/libhl.so`, `nvslc.hl`, and `nvslvm.hl`, so users do not need to install HashLink separately.
+Current release bundles:
+
+- `nvsl-linux-x64.tar.gz`
+- `nvsl-macos-x64.tar.gz`
+- `nvsl-windows-x64.zip`
+
+The packaged bundles include the local HashLink runtime, so users do not need to install `hl` separately for the shipped bundles.
 
 Compile and run a source project in one command:
 
@@ -112,12 +118,14 @@ The language core is cross-platform.
 
 - `NVSL`, `nvslc`, and `nvslvm` are written in Haxe
 - the compiler/runtime can be built anywhere the Haxe target and host runtime are supported
-- the current convenience scripts and self-contained release bundle are Linux/Bash-first
+- the repo-level source convenience scripts are still Linux/Bash-first
+- packaged release bundles are prepared for Linux, Windows, and macOS
 
 So the honest answer is:
 
 - language/toolchain architecture: cross-platform
-- repo install helpers and packaged no-`hl` runtime right now: primarily Linux-oriented
+- source install helpers: primarily Linux-oriented
+- packaged bundles: cross-platform for the supported release targets
 
 If you already have Haxe and HashLink on another platform, the raw build/run commands still work:
 
@@ -142,9 +150,15 @@ The workflows install Haxe and HashLink on Linux before running the build and sa
 
 - [install.sh](./install.sh): install Linux dependencies and build the tools
 - [nvsl](./nvsl): convenience wrapper for build, run, check, and sample validation
+- [nvsl.cmd](./nvsl.cmd): Windows command launcher for `nvsl`
 - [nvslc](./nvslc): wrapper for the bytecode compiler
+- [nvslc.cmd](./nvslc.cmd): Windows command launcher for `nvslc`
 - [nvslvm](./nvslvm): wrapper for the bytecode VM
+- [nvslvm.cmd](./nvslvm.cmd): Windows command launcher for `nvslvm`
+- [scripts/build-hashlink-runtime.sh](./scripts/build-hashlink-runtime.sh): build the core HashLink runtime for bundle packaging
 - [scripts/package-linux-bundle.sh](./scripts/package-linux-bundle.sh): build a self-contained Linux release bundle
+- [scripts/package-macos-bundle.sh](./scripts/package-macos-bundle.sh): build a self-contained macOS release bundle
+- [scripts/package-windows-bundle.sh](./scripts/package-windows-bundle.sh): build a self-contained Windows release bundle
 - [INSTALL.md](./INSTALL.md): install and run guide
 
 ## Main Entry Points

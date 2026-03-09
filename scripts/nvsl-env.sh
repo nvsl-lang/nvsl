@@ -12,6 +12,14 @@ nvsl_prepare_runtime_env() {
   if [[ -f "$NVSL_ROOT/bin/libhl.so" ]]; then
     export LD_LIBRARY_PATH="$NVSL_ROOT/bin${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
   fi
+
+  if [[ -f "$NVSL_ROOT/bin/libhl.dylib" ]]; then
+    export DYLD_LIBRARY_PATH="$NVSL_ROOT/bin${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}"
+  fi
+
+  if [[ -f "$NVSL_ROOT/bin/libhl.dll" ]]; then
+    export PATH="$NVSL_ROOT/bin${PATH:+:$PATH}"
+  fi
 }
 
 nvsl_require_haxe() {
@@ -42,8 +50,21 @@ nvsl_require_hl() {
     return 0
   fi
 
+  if [[ -x "$NVSL_ROOT/bin/hl.exe" ]]; then
+    NVSL_HL="$NVSL_ROOT/bin/hl.exe"
+    nvsl_prepare_runtime_env
+    export NVSL_HL
+    return 0
+  fi
+
   if command -v hl >/dev/null 2>&1; then
     NVSL_HL="$(command -v hl)"
+    export NVSL_HL
+    return 0
+  fi
+
+  if command -v hl.exe >/dev/null 2>&1; then
+    NVSL_HL="$(command -v hl.exe)"
     export NVSL_HL
     return 0
   fi
@@ -54,7 +75,13 @@ nvsl_require_hl() {
     return 0
   fi
 
-  echo "Missing HashLink runtime. Install HashLink first, run ./install.sh on Linux, or use a release bundle that includes bin/hl." >&2
+  if [[ -x "$NVSL_ROOT/.deps/hashlink/hl.exe" ]]; then
+    NVSL_HL="$NVSL_ROOT/.deps/hashlink/hl.exe"
+    export NVSL_HL
+    return 0
+  fi
+
+  echo "Missing HashLink runtime. Install HashLink first, run ./install.sh on Linux, or use a release bundle that includes a local runtime in bin/." >&2
   exit 1
 }
 

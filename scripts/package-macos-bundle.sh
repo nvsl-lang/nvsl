@@ -6,7 +6,7 @@ source "$ROOT/scripts/nvsl-env.sh"
 source "$ROOT/scripts/package-bundle-common.sh"
 
 DIST_DIR="${1:-$ROOT/dist}"
-BUNDLE_NAME="${2:-nvsl-linux-x64}"
+BUNDLE_NAME="${2:-nvsl-macos-x64}"
 STAGE_DIR="$DIST_DIR/$BUNDLE_NAME"
 ARCHIVE_PATH="$DIST_DIR/$BUNDLE_NAME.tar.gz"
 
@@ -21,18 +21,13 @@ nvsl_stage_bundle_common "$ROOT" "$STAGE_DIR"
 
 cp "$RUNTIME_BIN_DIR/hl" "$STAGE_DIR/bin/hl"
 
-if [[ -f "$RUNTIME_BIN_DIR/libhl.so" ]]; then
-  cp "$RUNTIME_BIN_DIR/libhl.so" "$STAGE_DIR/bin/libhl.so"
-else
-  local_libhl="$(ldd "$RUNTIME_BIN_DIR/hl" 2>/dev/null | awk '/libhl\.so/ {print $3; exit}')"
-  if [[ -n "$local_libhl" && -f "$local_libhl" ]]; then
-    cp "$local_libhl" "$STAGE_DIR/bin/libhl.so"
-  fi
+if [[ -f "$RUNTIME_BIN_DIR/libhl.dylib" ]]; then
+  cp "$RUNTIME_BIN_DIR/libhl.dylib" "$STAGE_DIR/bin/libhl.dylib"
 fi
 
 chmod +x "$STAGE_DIR/bin/hl"
 
 nvsl_archive_tar_gz "$DIST_DIR" "$BUNDLE_NAME" "$ARCHIVE_PATH"
 
-echo "Created Linux bundle:"
+echo "Created macOS bundle:"
 echo "  $ARCHIVE_PATH"

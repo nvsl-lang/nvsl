@@ -45,6 +45,26 @@ cd nvsl-linux-x64
 
 That bundle includes `bin/hl`, so Linux users do not need a separate HashLink install for the packaged release.
 
+Windows release bundle flow:
+
+```text
+Expand-Archive nvsl-windows-x64.zip
+cd nvsl-windows-x64
+nvsl run path\to\scripts --entry game.app.main
+```
+
+That bundle includes `bin\hl.exe` and `bin\libhl.dll`, so Windows users do not need a separate HashLink install for the packaged release.
+
+macOS release bundle flow:
+
+```bash
+tar -xzf nvsl-macos-x64.tar.gz
+cd nvsl-macos-x64
+./nvsl run path/to/scripts --entry game.app.main
+```
+
+That bundle includes `bin/hl` and `bin/libhl.dylib`, so macOS users do not need a separate HashLink install for the packaged release.
+
 If you already have Haxe and HashLink:
 
 ```bash
@@ -229,6 +249,21 @@ Default output:
 ```text
 dist/nvsl-linux-x64.tar.gz
 ```
+
+## Cross-Platform Bundle Packaging
+
+Additional repo-root helpers:
+
+- [../../../../scripts/build-hashlink-runtime.sh](../../../../scripts/build-hashlink-runtime.sh)
+- [../../../../scripts/package-macos-bundle.sh](../../../../scripts/package-macos-bundle.sh)
+- [../../../../scripts/package-windows-bundle.sh](../../../../scripts/package-windows-bundle.sh)
+
+These scripts are intended for release/CI packaging work:
+
+- `build-hashlink-runtime.sh` builds the core HashLink runtime for `linux`, `macos`, or `windows`
+- `package-linux-bundle.sh` creates `dist/nvsl-linux-x64.tar.gz`
+- `package-macos-bundle.sh` creates `dist/nvsl-macos-x64.tar.gz`
+- `package-windows-bundle.sh` creates `dist/nvsl-windows-x64.zip`
 
 ## Current Limits
 

@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-test:
+  linux-source:
     runs-on: ubuntu-latest
 
     steps:
@@ -35,3 +35,77 @@ jobs:
 
       - name: Run sample suite
         run: ./nvsl samples
+
+  bundle-smoke:
+    runs-on: ${{ matrix.runner }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux
+            runner: ubuntu-latest
+            bundle_name: nvsl-linux-x64
+            package_script: ./scripts/package-linux-bundle.sh
+            archive_path: dist/nvsl-linux-x64.tar.gz
+          - platform: macos
+            runner: macos-15-intel
+            bundle_name: nvsl-macos-x64
+            package_script: ./scripts/package-macos-bundle.sh
+            archive_path: dist/nvsl-macos-x64.tar.gz
+          - platform: windows
+            runner: windows-2022
+            bundle_name: nvsl-windows-x64
+            package_script: ./scripts/package-windows-bundle.sh
+            archive_path: dist/nvsl-windows-x64.zip
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Haxe
+        uses: tobil4sk/setup-haxe@9d1527c4bb9d1d449d196a0822118692ceeac457
+        with:
+          haxe-version: latest
+
+      - name: Install Linux build tools
+        if: matrix.platform == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build
+
+      - name: Ensure package scripts are executable
+        run: |
+          chmod +x ./scripts/build-tools.sh ./scripts/build-hashlink-runtime.sh ./scripts/package-linux-bundle.sh ./scripts/package-macos-bundle.sh ./scripts/package-windows-bundle.sh ./scripts/nvsl-env.sh ./nvsl ./nvslc ./nvslvm
+
+      - name: Build HashLink runtime
+        run: |
+          export NVSL_BUNDLE_PLATFORM=${{ matrix.platform }}
+          export NVSL_BUNDLE_ARCH=x64
+          export NVSL_OUTPUT_ENV="$GITHUB_ENV"
+          ./scripts/build-hashlink-runtime.sh
+
+      - name: Build local tools
+        run: ./scripts/build-tools.sh
+
+      - name: Package bundle
+        run: ${{ matrix.package_script }}
+
+      - name: Smoke-test Unix bundle
+        if: matrix.platform != 'windows'
+        run: |
+          rm -rf /tmp/${{ matrix.bundle_name }}
+          tar -xzf ${{ matrix.archive_path }} -C /tmp
+          PATH=/usr/bin:/bin /tmp/${{ matrix.bundle_name }}/nvslc ./src/novel/script/samples/ok/basic /tmp/${{ matrix.platform }}-bundle-test.nvbc --entry game.app.main
+          PATH=/usr/bin:/bin /tmp/${{ matrix.bundle_name }}/nvslvm /tmp/${{ matrix.platform }}-bundle-test.nvbc
+
+      - name: Smoke-test Windows bundle
+        if: matrix.platform == 'windows'
+        shell: pwsh
+        run: |
+          if (Test-Path "$env:TEMP\nvsl-windows-x64") {
+            Remove-Item -Recurse -Force "$env:TEMP\nvsl-windows-x64"
+          }
+          Expand-Archive -Path dist\nvsl-windows-x64.zip -DestinationPath $env:TEMP
+          & "$env:TEMP\nvsl-windows-x64\nvslc.cmd" "$PWD\src\novel\script\samples\ok\basic" "$env:TEMP\windows-bundle-test.nvbc" --entry game.app.main
+          & "$env:TEMP\nvsl-windows-x64\nvslvm.cmd" "$env:TEMP\windows-bundle-test.nvbc"
