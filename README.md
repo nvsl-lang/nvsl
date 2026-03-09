@@ -25,11 +25,19 @@ The toolchain is written in Haxe, so it can be embedded anywhere Haxe targets ru
 
 ## Quick Start
 
-Install the Linux toolchain and build the local tools:
+From source on Linux:
 
 ```bash
 ./install.sh
 ```
+
+From a Linux release bundle:
+
+```bash
+./nvsl run path/to/scripts --entry game.app.main
+```
+
+The Linux release bundle includes `bin/hl`, `bin/libhl.so`, `nvslc.hl`, and `nvslvm.hl`, so users do not need to install HashLink separately.
 
 Compile and run a source project in one command:
 
@@ -102,12 +110,12 @@ The language core is cross-platform.
 
 - `NVSL`, `nvslc`, and `nvslvm` are written in Haxe
 - the compiler/runtime can be built anywhere the Haxe target and host runtime are supported
-- the current convenience scripts in this repo are Linux/Bash-first
+- the current convenience scripts and self-contained release bundle are Linux/Bash-first
 
 So the honest answer is:
 
 - language/toolchain architecture: cross-platform
-- repo install helpers right now: primarily Linux-oriented
+- repo install helpers and packaged no-`hl` runtime right now: primarily Linux-oriented
 
 If you already have Haxe and HashLink on another platform, the raw build/run commands still work:
 
@@ -134,6 +142,7 @@ The workflows install Haxe and HashLink on Linux before running the build and sa
 - [nvsl](./nvsl): convenience wrapper for build, run, check, and sample validation
 - [nvslc](./nvslc): wrapper for the bytecode compiler
 - [nvslvm](./nvslvm): wrapper for the bytecode VM
+- [scripts/package-linux-bundle.sh](./scripts/package-linux-bundle.sh): build a self-contained Linux release bundle
 
 ## Main Entry Points
 

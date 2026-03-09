@@ -35,6 +35,16 @@ Recommended source checkout flow:
 ./nvsl run path/to/scripts --entry game.app.main
 ```
 
+Linux release bundle flow:
+
+```bash
+tar -xzf nvsl-linux-x64.tar.gz
+cd nvsl-linux-x64
+./nvsl run path/to/scripts --entry game.app.main
+```
+
+That bundle includes `bin/hl`, so Linux users do not need a separate HashLink install for the packaged release.
+
 If you already have Haxe and HashLink:
 
 ```bash
@@ -193,6 +203,31 @@ Quick checker:
 
 ```bash
 ./nvsl samples
+```
+
+## Linux Bundle Packaging
+
+Repo-root packaging helper:
+
+- [../../../../scripts/package-linux-bundle.sh](../../../../scripts/package-linux-bundle.sh)
+
+Purpose:
+
+- assemble a self-contained Linux bundle
+- include `nvsl`, `nvslc`, `nvslvm`
+- include `bin/nvslc.hl`, `bin/nvslvm.hl`
+- include `bin/hl` so the release can run without a separate HashLink install
+
+Usage:
+
+```bash
+./scripts/package-linux-bundle.sh
+```
+
+Default output:
+
+```text
+dist/nvsl-linux-x64.tar.gz
 ```
 
 ## Current Limits

@@ -24,5 +24,14 @@ jobs:
       - name: Build local tools
         run: ./scripts/build-tools.sh
 
+      - name: Package Linux bundle
+        run: ./scripts/package-linux-bundle.sh
+
+      - name: Smoke-test Linux bundle
+        run: |
+          tar -xzf dist/nvsl-linux-x64.tar.gz -C /tmp
+          /tmp/nvsl-linux-x64/nvslc ./src/novel/script/samples/ok/basic /tmp/nvsl-ci-basic.nvbc --entry game.app.main
+          /tmp/nvsl-linux-x64/nvslvm /tmp/nvsl-ci-basic.nvbc
+
       - name: Run sample suite
         run: ./nvsl samples

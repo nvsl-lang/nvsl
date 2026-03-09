@@ -8,6 +8,12 @@ NVSL_ENV_LOADED=1
 NVSL_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 export NVSL_ROOT
 
+nvsl_prepare_runtime_env() {
+  if [[ -f "$NVSL_ROOT/bin/libhl.so" ]]; then
+    export LD_LIBRARY_PATH="$NVSL_ROOT/bin${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+  fi
+}
+
 nvsl_require_haxe() {
   if command -v haxe >/dev/null 2>&1; then
     return 0
@@ -29,6 +35,13 @@ nvsl_require_hl() {
     return 0
   fi
 
+  if [[ -x "$NVSL_ROOT/bin/hl" ]]; then
+    NVSL_HL="$NVSL_ROOT/bin/hl"
+    nvsl_prepare_runtime_env
+    export NVSL_HL
+    return 0
+  fi
+
   if command -v hl >/dev/null 2>&1; then
     NVSL_HL="$(command -v hl)"
     export NVSL_HL
@@ -41,7 +54,7 @@ nvsl_require_hl() {
     return 0
   fi
 
-  echo "Missing HashLink runtime. Install HashLink first or run ./install.sh on Linux." >&2
+  echo "Missing HashLink runtime. Install HashLink first, run ./install.sh on Linux, or use a release bundle that includes bin/hl." >&2
   exit 1
 }
 
@@ -120,6 +133,7 @@ nvsl_ensure_tool() {
   output="$(nvsl_output_for "$tool")"
 
   nvsl_require_hl
+  nvsl_prepare_runtime_env
 
   if nvsl_tool_needs_rebuild "$tool"; then
     echo "[build] $tool"

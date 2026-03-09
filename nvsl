@@ -217,6 +217,10 @@ case "$command_name" in
     exec "$NVSL_ROOT/nvslvm" "$@"
     ;;
   samples)
+    if [[ ! -x "$NVSL_ROOT/src/novel/script/samples/check-samples.sh" ]]; then
+      echo "Sample validation is only available in a source checkout." >&2
+      exit 1
+    fi
     exec "$NVSL_ROOT/src/novel/script/samples/check-samples.sh"
     ;;
   help|-h|--help)
