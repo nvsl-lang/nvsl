@@ -8,6 +8,21 @@ HASHLINK_REPO="${HASHLINK_REPO:-https://github.com/HaxeFoundation/hashlink.git}"
 HASHLINK_REF="${HASHLINK_REF:-latest}"
 HASHLINK_SRC_DIR="${HASHLINK_SRC_DIR:-$ROOT/.deps/hashlink-src}"
 HASHLINK_BUILD_DIR="${HASHLINK_BUILD_DIR:-$ROOT/.deps/hashlink-build/$PLATFORM-$ARCH}"
+HASHLINK_MINIMAL_CMAKE_FLAGS=(
+  -DWITH_SYSTEM_PCRE2=OFF
+  -DBUILD_TESTING=OFF
+  -DWITH_FMT=OFF
+  -DWITH_OPENAL=OFF
+  -DWITH_SDL=OFF
+  -DWITH_SQLITE=OFF
+  -DWITH_SSL=OFF
+  -DWITH_UI=OFF
+  -DWITH_UV=OFF
+  -DWITH_VIDEO=OFF
+  -DWITH_HEAPS=OFF
+  -DWITH_DIRECTX=OFF
+  -DWITH_DX12=OFF
+)
 
 mkdir -p "$(dirname "$HASHLINK_SRC_DIR")" "$(dirname "$HASHLINK_BUILD_DIR")"
 
@@ -19,7 +34,7 @@ case "$PLATFORM" in
   linux)
     cmake -S "$HASHLINK_SRC_DIR" -B "$HASHLINK_BUILD_DIR" -G Ninja \
       -DCMAKE_BUILD_TYPE=Release \
-      -DWITH_SYSTEM_PCRE2=OFF
+      "${HASHLINK_MINIMAL_CMAKE_FLAGS[@]}"
     cmake --build "$HASHLINK_BUILD_DIR" --config Release --target hl libhl
     HL_PATH="$HASHLINK_BUILD_DIR/bin/hl"
     ;;
@@ -34,7 +49,7 @@ case "$PLATFORM" in
 
     cmake -S "$HASHLINK_SRC_DIR" -B "$HASHLINK_BUILD_DIR" -G Ninja \
       -DCMAKE_BUILD_TYPE=Release \
-      -DWITH_SYSTEM_PCRE2=OFF \
+      "${HASHLINK_MINIMAL_CMAKE_FLAGS[@]}" \
       -DCMAKE_OSX_ARCHITECTURES="$MACOS_ARCH" \
       -DCMAKE_OSX_DEPLOYMENT_TARGET="$MACOS_DEPLOYMENT_TARGET"
     cmake --build "$HASHLINK_BUILD_DIR" --config Release --target hl libhl
@@ -51,7 +66,7 @@ case "$PLATFORM" in
       -A "$WINDOWS_ARCH" \
       -DCMAKE_BUILD_TYPE=Release \
       -DFLAT_INSTALL_TREE=ON \
-      -DWITH_SYSTEM_PCRE2=OFF
+      "${HASHLINK_MINIMAL_CMAKE_FLAGS[@]}"
     cmake --build "$HASHLINK_BUILD_DIR" --config Release --target hl libhl
     HL_PATH="$HASHLINK_BUILD_DIR/bin/hl.exe"
     ;;
