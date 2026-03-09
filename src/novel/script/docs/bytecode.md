@@ -26,7 +26,7 @@ Because the compiler and VM are written in Haxe, the engine can still be built t
 Implemented now:
 
 - `NVBC` program model
-- `NVBC` JSON codec
+- `NVBC` text codec
 - `nvslc` directory compiler CLI
 - `nvslvm` bytecode loader/runtime CLI
 - bytecode roundtrip tests

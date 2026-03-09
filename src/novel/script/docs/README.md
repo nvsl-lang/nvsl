@@ -29,6 +29,7 @@ The language is intentionally small. It is not meant to become a general-purpose
 - [errors.md](./errors.md): parse/check/compile/runtime error categories and diagnostics
 - [host-libraries.md](./host-libraries.md): how engine-specific safe modules should layer on top
 - [tooling.md](./tooling.md): `nvslc`, `nvslvm`, build files, bytecode flow
+- [benchmarking.md](./benchmarking.md): built-in benchmark harness and how to use it
 - [runtime.md](./runtime.md): parse/check/link/load flow, save/load, resume, interpreter/runtime model
 - [bytecode.md](./bytecode.md): `NVSL`, `nvslc`, `NVBC`, `nvslvm`
 - [authoring-guide.md](./authoring-guide.md): how to write scripts, what to avoid, current constraints

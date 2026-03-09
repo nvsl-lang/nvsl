@@ -14,6 +14,7 @@ The toolchain is written in Haxe, so it can be embedded anywhere Haxe targets ru
 - AST runtime
 - bytecode compiler
 - bytecode VM
+- benchmark harness
 - docs
 - samples
 
@@ -88,6 +89,12 @@ Run the bundled samples:
 ./nvsl samples
 ```
 
+Run the built-in benchmark from a source checkout:
+
+```bash
+./nvsl bench
+```
+
 ## Add To PATH
 
 From the repo root, add the local command wrappers to your shell `PATH`:
@@ -155,6 +162,8 @@ The workflows install Haxe and HashLink on Linux before running the build and sa
 - [nvslc.cmd](./nvslc.cmd): Windows command launcher for `nvslc`
 - [nvslvm](./nvslvm): wrapper for the bytecode VM
 - [nvslvm.cmd](./nvslvm.cmd): Windows command launcher for `nvslvm`
+- [nvslbench](./nvslbench): wrapper for the built-in benchmark harness
+- [nvslbench.cmd](./nvslbench.cmd): Windows command launcher for `nvslbench`
 - [scripts/build-hashlink-runtime.sh](./scripts/build-hashlink-runtime.sh): build the core HashLink runtime for bundle packaging
 - [scripts/package-linux-bundle.sh](./scripts/package-linux-bundle.sh): build a self-contained Linux release bundle
 - [scripts/package-macos-bundle.sh](./scripts/package-macos-bundle.sh): build a self-contained macOS release bundle
@@ -167,6 +176,7 @@ The workflows install Haxe and HashLink on Linux before running the build and sa
 - [docs/README.md](./src/novel/script/docs/README.md)
 - [CORE_LANGUAGE.md](./src/novel/script/CORE_LANGUAGE.md)
 - [INSTALL.md](./INSTALL.md)
+- [src/novel/script/docs/benchmarking.md](./src/novel/script/docs/benchmarking.md)
 - [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ## License

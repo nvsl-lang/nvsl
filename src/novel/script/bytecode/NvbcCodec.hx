@@ -1,6 +1,8 @@
 package novel.script.bytecode;
 
 import haxe.Json;
+import haxe.Serializer;
+import haxe.Unserializer;
 import haxe.ds.StringMap;
 import novel.script.ScriptError;
 import novel.script.bytecode.Nvbc.NvbcEnumType;
@@ -15,13 +17,18 @@ import novel.script.runtime.ScriptSnapshot.ScriptSnapshotCodec;
 class NvbcCodec {
 	public static inline var FORMAT = "novelvisual.nvbc";
 	public static inline var VERSION = 2;
+	static inline var SERIAL_PREFIX = "NVBCS:";
 
 	public static function stringifyProgram(program:NvbcProgram):String {
-		return Json.stringify(encodeProgram(program));
+		return SERIAL_PREFIX + Serializer.run(encodeProgram(program));
 	}
 
-	public static function parseProgram(json:String):NvbcProgram {
-		return decodeProgram(Json.parse(json));
+	public static function parseProgram(content:String):NvbcProgram {
+		if (StringTools.startsWith(content, SERIAL_PREFIX)) {
+			return decodeProgram(Unserializer.run(content.substr(SERIAL_PREFIX.length)));
+		}
+
+		return decodeProgram(Json.parse(content));
 	}
 
 	public static function encodeProgram(program:NvbcProgram):Dynamic {

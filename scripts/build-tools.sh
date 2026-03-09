@@ -17,6 +17,14 @@ fi
 nvsl_build_tool nvslc
 nvsl_build_tool nvslvm
 
+if [[ -f "$ROOT/build.nvslbench.hxml" ]]; then
+  nvsl_build_tool nvslbench
+fi
+
 echo "Built:"
 echo "  $ROOT/bin/nvslc.hl"
 echo "  $ROOT/bin/nvslvm.hl"
+
+if [[ -f "$ROOT/build.nvslbench.hxml" ]]; then
+  echo "  $ROOT/bin/nvslbench.hl"
+fi

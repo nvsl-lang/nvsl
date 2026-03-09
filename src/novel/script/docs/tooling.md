@@ -8,6 +8,7 @@ This file documents the current `NVSL` tooling surface.
 - `nvslc`: source-to-bytecode compiler
 - `NVBC`: bytecode format
 - `nvslvm`: bytecode runtime
+- `nvslbench`: synthetic benchmark harness
 - `./nvsl`: convenience wrapper for build, run, check, and sample validation
 
 ## Build Files
@@ -17,6 +18,7 @@ Current Haxe build files:
 - [build.script.hxml](../../../../build.script.hxml)
 - [build.nvslc.hxml](../../../../build.nvslc.hxml)
 - [build.nvslvm.hxml](../../../../build.nvslvm.hxml)
+- [build.nvslbench.hxml](../../../../build.nvslbench.hxml)
 
 ## Simple Wrapper Commands
 
@@ -26,6 +28,7 @@ Repo-root helper scripts:
 - [../../../../nvsl](../../../../nvsl): convenience command
 - [../../../../nvslc](../../../../nvslc): wrapper for the compiler
 - [../../../../nvslvm](../../../../nvslvm): wrapper for the VM
+- [../../../../nvslbench](../../../../nvslbench): wrapper for the benchmark harness
 - [../../../../scripts/build-tools.sh](../../../../scripts/build-tools.sh): build local `.hl` tools
 
 Recommended source checkout flow:
@@ -33,6 +36,12 @@ Recommended source checkout flow:
 ```bash
 ./install.sh
 ./nvsl run path/to/scripts --entry game.app.main
+```
+
+Run the benchmark harness:
+
+```bash
+./nvsl bench
 ```
 
 Linux release bundle flow:
@@ -91,6 +100,7 @@ Usage:
 ./nvsl run <source-path|program.nvbc> [--entry module.export] [--extension .nvsl] [--out output.nvbc]
 ./nvsl check <source-path> [--entry module.export] [--extension .nvsl]
 ./nvsl vm <program.nvbc> [module.export]
+./nvsl bench [--modules N] [--helpers N] [--iterations N] [--run-iterations N] [--warmup N] [--seed N]
 ./nvsl samples
 ```
 
@@ -99,6 +109,7 @@ Notes:
 - `<source-path>` may be a directory or a single `.nvsl` file
 - `./nvsl run` compiles to a temporary `.nvbc` unless `--out` is provided
 - source runs usually need `--entry` unless the project already stores a default entrypoint
+- `./nvsl bench` is only available in a source checkout because it builds the benchmark harness from source
 
 ## `nvslc`
 
@@ -166,6 +177,33 @@ Example:
 If `hl` is not on your `PATH`, the wrappers also respect `HL=/path/to/hl`.
 
 If the second argument is omitted, `nvslvm` uses the program default entrypoint.
+
+## `nvslbench`
+
+Source:
+
+- [NvslBenchMain.hx](../tools/NvslBenchMain.hx)
+- [ScriptBench.hx](../bench/ScriptBench.hx)
+
+Purpose:
+
+- generate a synthetic multi-module `NVSL` project in memory
+- benchmark parser/checker/compiler/load/runtime phases
+- compare AST runtime and VM behavior on the same generated workload
+
+Usage:
+
+```bash
+hl bin/nvslbench.hl [--modules N] [--helpers N] [--iterations N] [--run-iterations N] [--warmup N] [--seed N]
+```
+
+Example:
+
+```bash
+./nvsl bench --modules 12 --helpers 24 --iterations 10 --run-iterations 250
+```
+
+See [benchmarking.md](./benchmarking.md) for details and interpretation notes.
 
 ## Engine API
 

@@ -93,6 +93,9 @@ nvsl_build_file_for() {
     nvslvm)
       printf '%s\n' "$NVSL_ROOT/build.nvslvm.hxml"
       ;;
+    nvslbench)
+      printf '%s\n' "$NVSL_ROOT/build.nvslbench.hxml"
+      ;;
     *)
       echo "Unknown NVSL tool '$1'." >&2
       exit 1
@@ -107,6 +110,9 @@ nvsl_output_for() {
       ;;
     nvslvm)
       printf '%s\n' "$NVSL_ROOT/bin/nvslvm.hl"
+      ;;
+    nvslbench)
+      printf '%s\n' "$NVSL_ROOT/bin/nvslbench.hl"
       ;;
     *)
       echo "Unknown NVSL tool '$1'." >&2

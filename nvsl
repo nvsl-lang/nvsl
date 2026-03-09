@@ -11,6 +11,7 @@ usage:
   ./nvsl run <source-path|program.nvbc> [--entry module.export] [--extension .nvsl] [--out output.nvbc]
   ./nvsl check <source-path> [--entry module.export] [--extension .nvsl]
   ./nvsl vm <program.nvbc> [module.export]
+  ./nvsl bench [--modules N] [--helpers N] [--iterations N] [--run-iterations N] [--warmup N] [--seed N]
   ./nvsl samples
 
 notes:
@@ -215,6 +216,13 @@ case "$command_name" in
       exit 1
     fi
     exec "$NVSL_ROOT/nvslvm" "$@"
+    ;;
+  bench)
+    if [[ ! -f "$NVSL_ROOT/build.nvslbench.hxml" ]]; then
+      echo "Benchmarking is only available in a source checkout." >&2
+      exit 1
+    fi
+    exec "$NVSL_ROOT/nvslbench" "$@"
     ;;
   samples)
     if [[ ! -x "$NVSL_ROOT/src/novel/script/samples/check-samples.sh" ]]; then

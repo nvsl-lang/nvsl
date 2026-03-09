@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$ROOT/scripts/nvsl-env.sh"
+
+if [[ ! -f "$NVSL_ROOT/build.nvslbench.hxml" ]]; then
+  echo "Benchmarking is only available in a source checkout." >&2
+  exit 1
+fi
+
+nvsl_ensure_tool nvslbench
+exec "$NVSL_HL" "$NVSL_ROOT/bin/nvslbench.hl" "$@"

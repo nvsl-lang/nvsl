@@ -12,6 +12,7 @@ usage:
   nvsl run <source-path|program.nvbc> [--entry module.export] [--extension .nvsl] [--out output.nvbc]
   nvsl check <source-path> [--entry module.export] [--extension .nvsl]
   nvsl vm <program.nvbc> [module.export]
+  nvsl bench [--modules N] [--helpers N] [--iterations N] [--run-iterations N] [--warmup N] [--seed N]
   nvsl samples
 "@ | Write-Host
 }
@@ -27,6 +28,12 @@ function Invoke-Nvslc {
 function Invoke-Nvslvm {
   param([string[]]$Arguments)
   & (Join-Path $PSScriptRoot "nvslvm.ps1") @Arguments
+  exit $LASTEXITCODE
+}
+
+function Invoke-Nvslbench {
+  param([string[]]$Arguments)
+  & (Join-Path $PSScriptRoot "nvslbench.ps1") @Arguments
   exit $LASTEXITCODE
 }
 
@@ -201,6 +208,15 @@ switch ($commandName) {
     }
 
     Invoke-Nvslvm $remaining
+  }
+
+  "bench" {
+    $buildFile = Join-Path $nvslRoot "build.nvslbench.hxml"
+    if (-not (Test-Path $buildFile)) {
+      throw "Benchmarking is only available in a source checkout."
+    }
+
+    Invoke-Nvslbench $remaining
   }
 
   "samples" {

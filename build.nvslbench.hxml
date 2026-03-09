@@ -1,0 +1,3 @@
+-cp src
+-main novel.script.tools.NvslBenchMain
+-hl bin/nvslbench.hl

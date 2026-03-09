@@ -48,31 +48,33 @@ function Get-NvslHlPath {
 function Get-NvslBuildFile {
   param(
     [string]$NvslRoot,
-    [ValidateSet("nvslc", "nvslvm")][string]$Tool
+    [ValidateSet("nvslc", "nvslvm", "nvslbench")][string]$Tool
   )
 
   switch ($Tool) {
     "nvslc" { return (Join-Path $NvslRoot "build.nvslc.hxml") }
     "nvslvm" { return (Join-Path $NvslRoot "build.nvslvm.hxml") }
+    "nvslbench" { return (Join-Path $NvslRoot "build.nvslbench.hxml") }
   }
 }
 
 function Get-NvslToolOutput {
   param(
     [string]$NvslRoot,
-    [ValidateSet("nvslc", "nvslvm")][string]$Tool
+    [ValidateSet("nvslc", "nvslvm", "nvslbench")][string]$Tool
   )
 
   switch ($Tool) {
     "nvslc" { return (Join-Path $NvslRoot "bin\nvslc.hl") }
     "nvslvm" { return (Join-Path $NvslRoot "bin\nvslvm.hl") }
+    "nvslbench" { return (Join-Path $NvslRoot "bin\nvslbench.hl") }
   }
 }
 
 function Test-NvslToolNeedsRebuild {
   param(
     [string]$NvslRoot,
-    [ValidateSet("nvslc", "nvslvm")][string]$Tool
+    [ValidateSet("nvslc", "nvslvm", "nvslbench")][string]$Tool
   )
 
   if ($env:NVSL_FORCE_REBUILD -eq "1") {
@@ -110,7 +112,7 @@ function Ensure-NvslHaxe {
 function Build-NvslTool {
   param(
     [string]$NvslRoot,
-    [ValidateSet("nvslc", "nvslvm")][string]$Tool
+    [ValidateSet("nvslc", "nvslvm", "nvslbench")][string]$Tool
   )
 
   Ensure-NvslHaxe
@@ -134,7 +136,7 @@ function Build-NvslTool {
 function Ensure-NvslTool {
   param(
     [string]$NvslRoot,
-    [ValidateSet("nvslc", "nvslvm")][string]$Tool
+    [ValidateSet("nvslc", "nvslvm", "nvslbench")][string]$Tool
   )
 
   [void](Get-NvslHlPath $NvslRoot)

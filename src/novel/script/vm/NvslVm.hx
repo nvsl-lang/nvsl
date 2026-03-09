@@ -44,7 +44,7 @@ class NvslVmModuleInstance {
 	}
 
 	public function call(name:String, args:Array<ScriptValue>):ScriptValue {
-		return runtime.callFunction(this.name, name, args);
+		return runtime.callExport(this, name, args);
 	}
 }
 
@@ -71,7 +71,7 @@ class NvslVmProjectInstance {
 	}
 
 	public function call(moduleName:String, exportName:String, args:Array<ScriptValue>):ScriptValue {
-		return runtime.callFunction(moduleName, exportName, args);
+		return getModule(moduleName).call(exportName, args);
 	}
 
 	public function callDefault(args:Array<ScriptValue>):ScriptValue {
@@ -434,9 +434,19 @@ private class NvslVmRuntime {
 		return new NvslVmExecution(this, [createExecutionFrame(value, args, moduleName, exportName)]);
 	}
 
+	public function callExport(module:NvslVmModuleInstance, exportName:String, args:Array<ScriptValue>):ScriptValue {
+		return callValue(module.env.get(exportName), args, module, module.name + "." + exportName);
+	}
+
 	public function callFunction(moduleName:String, functionName:String, args:Array<ScriptValue>):ScriptValue {
 		var module = getModule(moduleName);
-		return executeFunction(module, getFunction(moduleName, functionName), args);
+		var fn = module.module.functions.get(functionName);
+
+		if (fn == null) {
+			throw new ScriptError("Unknown VM function '" + moduleName + "." + functionName + "'.");
+		}
+
+		return executeFunction(module, fn, args);
 	}
 
 	public function createSnapshotData():ScriptProjectSnapshotPayload {
