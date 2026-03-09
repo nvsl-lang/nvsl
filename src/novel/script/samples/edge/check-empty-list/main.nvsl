@@ -1,0 +1,5 @@
+module edge.empty_list;
+
+fn main() -> Int {
+	std.len([])
+}

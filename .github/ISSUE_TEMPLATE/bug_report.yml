@@ -1,0 +1,70 @@
+name: Bug report
+description: Report a crash, incorrect compile/runtime result, or broken behavior in NVSL.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting this. Please include a minimal `.nvsl` reproduction if possible.
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: Describe the current behavior clearly.
+      placeholder: The compiler accepts X but the VM crashes when...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+      description: Describe the correct behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Include steps, commands, or a minimal script/module layout.
+      placeholder: |
+        1. Create `game/app.nvsl`
+        2. Run `hl bin/nvslc.hl ...`
+        3. Observe...
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: script
+    attributes:
+      label: Minimal `.nvsl` sample
+      description: Paste the smallest script that reproduces the issue.
+      render: text
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Compiler or runtime output
+      description: Paste the exact error text or stack trace.
+      render: text
+  - type: dropdown
+    id: component
+    attributes:
+      label: Affected area
+      options:
+        - parser
+        - checker
+        - linker/project loader
+        - compiler (nvslc)
+        - bytecode format (NVBC)
+        - VM (nvslvm)
+        - samples/docs
+        - other
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Haxe version, HashLink version, and repo commit/tag if known.
+      placeholder: Ubuntu 24.04, Haxe 4.3.7, HashLink 1.15.0, main@abcdef1

@@ -1,0 +1,54 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Haxe and HashLink
+        run: ./scripts/install-linux-toolchain.sh
+
+      - name: Build nvslc
+        run: haxe build.nvslc.hxml
+
+      - name: Build nvslvm
+        run: haxe build.nvslvm.hxml
+
+      - name: Package release artifacts
+        run: |
+          mkdir -p dist
+          cp README.md dist/
+          cp LICENSE dist/
+          cp bin/nvslc.hl dist/
+          cp bin/nvslvm.hl dist/
+          tar -czf dist/nvsl-tools-linux.tar.gz -C dist README.md LICENSE nvslc.hl nvslvm.hl
+
+      - name: Upload workflow artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: nvsl-tools-linux
+          path: |
+            dist/nvsl-tools-linux.tar.gz
+            bin/nvslc.hl
+            bin/nvslvm.hl
+
+      - name: Publish GitHub release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/nvsl-tools-linux.tar.gz
+            bin/nvslc.hl
+            bin/nvslvm.hl

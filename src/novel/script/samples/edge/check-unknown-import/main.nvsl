@@ -1,0 +1,7 @@
+module edge.unknown_import;
+
+import missing.pkg;
+
+fn main() -> Int {
+	1
+}

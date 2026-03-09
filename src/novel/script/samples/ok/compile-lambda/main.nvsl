@@ -1,0 +1,8 @@
+module ok.compile_lambda;
+
+fn main() -> Int {
+	let bonus = 2;
+	let makeAdder = fn(delta: Int) => fn(value: Int) => value + delta + bonus;
+	let add = makeAdder(3);
+	add(4)
+}

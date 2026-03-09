@@ -1,0 +1,3 @@
+-cp src
+-main novel.script.tests.ScriptSmoke
+--interp

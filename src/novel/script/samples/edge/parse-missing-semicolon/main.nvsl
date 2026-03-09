@@ -1,0 +1,7 @@
+module edge.parse_missing_semicolon;
+
+let score: Int = 0
+
+fn main() -> Int {
+	score
+}

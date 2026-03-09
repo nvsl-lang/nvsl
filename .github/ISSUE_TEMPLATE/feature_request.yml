@@ -1,0 +1,45 @@
+name: Feature request
+description: Propose a language, tooling, documentation, or runtime improvement.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or limitation
+      description: What are you blocked by today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the smallest useful change.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Describe any workarounds or different approaches.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - language core
+        - std library
+        - compiler (nvslc)
+        - bytecode / VM
+        - docs
+        - samples
+        - repo tooling / CI
+        - other
+    validations:
+      required: true
+  - type: textarea
+    id: examples
+    attributes:
+      label: Examples
+      description: Include sample syntax, CLI usage, or reference behavior if helpful.

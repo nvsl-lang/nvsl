@@ -1,0 +1,11 @@
+module ok.compile_function_value;
+
+fn inc(value: Int) -> Int {
+	value + 1
+}
+
+fn main() -> Int {
+	let chosen = inc;
+	let pick = std.max;
+	pick(chosen(4), 2)
+}

@@ -1,0 +1,8 @@
+module game.app;
+
+import game.state as state;
+
+fn main() -> String {
+	let next: Int = state.nextScore(3);
+	std.concat(state.heroMood(), std.concat(":", std.concat(std.toString(next), std.concat(":", state.tagLine()))))
+}

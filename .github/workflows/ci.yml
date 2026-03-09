@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Haxe and HashLink
+        run: ./scripts/install-linux-toolchain.sh
+
+      - name: Build script smoke test
+        run: haxe build.script.hxml
+
+      - name: Build nvslc
+        run: haxe build.nvslc.hxml
+
+      - name: Build nvslvm
+        run: haxe build.nvslvm.hxml
+
+      - name: Run sample suite
+        run: ./src/novel/script/samples/check-samples.sh

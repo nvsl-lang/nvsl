@@ -1,0 +1,24 @@
+module game.state;
+
+import common.types as types;
+
+let hero: types.Character = types.Character {
+	name: "Ava",
+	mood: types.Mood.Warm,
+	tags: ["pilot", "friend"]
+};
+
+let score: Int = 4;
+
+fn nextScore(delta: Int) -> Int {
+	set score = score + delta;
+	score
+}
+
+fn heroMood() -> String {
+	types.moodLabel(hero.mood)
+}
+
+fn tagLine() -> String {
+	std.join(hero.tags, "|")
+}

@@ -1,0 +1,5 @@
+module edge.type_mismatch;
+
+fn main() -> Int {
+	1 + "oops"
+}

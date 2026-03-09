@@ -1,0 +1,3 @@
+-cp src
+-main novel.script.tools.NvslVmMain
+-hl bin/nvslvm.hl

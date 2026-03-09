@@ -1,0 +1,16 @@
+module common.types;
+
+enum Mood {
+	Warm;
+	Cold;
+}
+
+struct Character {
+	name: String;
+	mood: common.types.Mood;
+	tags: List<String>;
+}
+
+fn moodLabel(mood: common.types.Mood) -> String {
+	if mood == common.types.Mood.Warm { "warm" } else { "cold" }
+}

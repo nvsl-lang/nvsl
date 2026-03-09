@@ -1,0 +1,5 @@
+module edge.runtime_index_out_of_bounds;
+
+fn main() -> Int {
+	[1, 2][5]
+}
