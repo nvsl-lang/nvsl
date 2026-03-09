@@ -9,6 +9,8 @@ HASHLINK_REF="${HASHLINK_REF:-latest}"
 HASHLINK_SRC_DIR="${HASHLINK_SRC_DIR:-$ROOT/.deps/hashlink-src}"
 HASHLINK_BUILD_DIR="${HASHLINK_BUILD_DIR:-$ROOT/.deps/hashlink-build/$PLATFORM-$ARCH}"
 
+mkdir -p "$(dirname "$HASHLINK_SRC_DIR")" "$(dirname "$HASHLINK_BUILD_DIR")"
+
 if [[ ! -d "$HASHLINK_SRC_DIR/.git" ]]; then
   git clone --depth 1 --branch "$HASHLINK_REF" "$HASHLINK_REPO" "$HASHLINK_SRC_DIR"
 fi
