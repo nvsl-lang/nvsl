@@ -25,6 +25,8 @@ The toolchain is written in Haxe, so it can be embedded anywhere Haxe targets ru
 
 ## Quick Start
 
+See [INSTALL.md](./INSTALL.md) for full install and run instructions.
+
 From source on Linux:
 
 ```bash
@@ -143,12 +145,14 @@ The workflows install Haxe and HashLink on Linux before running the build and sa
 - [nvslc](./nvslc): wrapper for the bytecode compiler
 - [nvslvm](./nvslvm): wrapper for the bytecode VM
 - [scripts/package-linux-bundle.sh](./scripts/package-linux-bundle.sh): build a self-contained Linux release bundle
+- [INSTALL.md](./INSTALL.md): install and run guide
 
 ## Main Entry Points
 
 - [ScriptEngine.hx](./src/novel/script/ScriptEngine.hx)
 - [docs/README.md](./src/novel/script/docs/README.md)
 - [CORE_LANGUAGE.md](./src/novel/script/CORE_LANGUAGE.md)
+- [INSTALL.md](./INSTALL.md)
 - [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ## License
