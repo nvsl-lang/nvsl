@@ -72,6 +72,52 @@ Run the bundled samples:
 ./nvsl samples
 ```
 
+## Add To PATH
+
+From the repo root, add the local command wrappers to your shell `PATH`:
+
+```bash
+export PATH="/absolute/path/to/nvsl:$PATH"
+```
+
+Example:
+
+```bash
+export PATH="$HOME/Desktop/nvsl:$PATH"
+```
+
+Then you can run:
+
+```bash
+nvsl run path/to/scripts --entry game.app.main
+nvslc path/to/scripts bin/game.nvbc --entry game.app.main
+nvslvm bin/game.nvbc
+```
+
+If you want this permanently, add the `export PATH=...` line to your shell profile such as `~/.bashrc` or `~/.zshrc`.
+
+## Cross-Platform Status
+
+The language core is cross-platform.
+
+- `NVSL`, `nvslc`, and `nvslvm` are written in Haxe
+- the compiler/runtime can be built anywhere the Haxe target and host runtime are supported
+- the current convenience scripts in this repo are Linux/Bash-first
+
+So the honest answer is:
+
+- language/toolchain architecture: cross-platform
+- repo install helpers right now: primarily Linux-oriented
+
+If you already have Haxe and HashLink on another platform, the raw build/run commands still work:
+
+```bash
+haxe build.nvslc.hxml
+haxe build.nvslvm.hxml
+hl bin/nvslc.hl path/to/scripts bin/game.nvbc --entry game.app.main
+hl bin/nvslvm.hl bin/game.nvbc
+```
+
 ## Automation
 
 This repo includes GitHub Actions for:
@@ -94,6 +140,7 @@ The workflows install Haxe and HashLink on Linux before running the build and sa
 - [ScriptEngine.hx](./src/novel/script/ScriptEngine.hx)
 - [docs/README.md](./src/novel/script/docs/README.md)
 - [CORE_LANGUAGE.md](./src/novel/script/CORE_LANGUAGE.md)
+- [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ## License
 
