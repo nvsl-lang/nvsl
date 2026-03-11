@@ -1,0 +1,12 @@
+{
+  "name": "nvsl",
+  "url": "https://github.com/nvsl-lang/nvsl",
+  "license": "MIT",
+  "tags": ["scripting", "game", "visual-novel", "bytecode", "sandbox"],
+  "description": "Small, safe game scripting language with parser, checker, compiler, and VM.",
+  "version": "0.2.0",
+  "classPath": "src",
+  "releasenote": "Add benchmark harness and optimize the NVBC runtime.",
+  "contributors": ["bymehul"],
+  "dependencies": {}
+}
