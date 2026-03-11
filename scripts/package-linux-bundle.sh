@@ -20,15 +20,7 @@ fi
 nvsl_stage_bundle_common "$ROOT" "$STAGE_DIR"
 
 cp "$RUNTIME_BIN_DIR/hl" "$STAGE_DIR/bin/hl"
-
-if [[ -f "$RUNTIME_BIN_DIR/libhl.so" ]]; then
-  cp "$RUNTIME_BIN_DIR/libhl.so" "$STAGE_DIR/bin/libhl.so"
-else
-  local_libhl="$(ldd "$RUNTIME_BIN_DIR/hl" 2>/dev/null | awk '/libhl\.so/ {print $3; exit}')"
-  if [[ -n "$local_libhl" && -f "$local_libhl" ]]; then
-    cp "$local_libhl" "$STAGE_DIR/bin/libhl.so"
-  fi
-fi
+nvsl_stage_linux_runtime_libs "$RUNTIME_BIN_DIR" "$STAGE_DIR/bin"
 
 chmod +x "$STAGE_DIR/bin/hl"
 

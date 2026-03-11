@@ -20,10 +20,7 @@ fi
 nvsl_stage_bundle_common "$ROOT" "$STAGE_DIR"
 
 cp "$RUNTIME_BIN_DIR/hl" "$STAGE_DIR/bin/hl"
-
-if [[ -f "$RUNTIME_BIN_DIR/libhl.dylib" ]]; then
-  cp "$RUNTIME_BIN_DIR/libhl.dylib" "$STAGE_DIR/bin/libhl.dylib"
-fi
+nvsl_stage_macos_runtime_libs "$RUNTIME_BIN_DIR" "$STAGE_DIR/bin"
 
 chmod +x "$STAGE_DIR/bin/hl"
 

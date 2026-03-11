@@ -4,9 +4,9 @@
   "license": "MIT",
   "tags": ["scripting", "game", "visual-novel", "bytecode", "sandbox"],
   "description": "Small, safe game scripting language with parser, checker, compiler, and VM.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "classPath": "src",
-  "releasenote": "Add benchmark harness and optimize the NVBC runtime.",
+  "releasenote": "Fix self-contained Unix bundle packaging and ship the v0.3 release.",
   "contributors": ["bymehul"],
   "dependencies": {}
 }

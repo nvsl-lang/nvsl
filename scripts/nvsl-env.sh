@@ -9,11 +9,11 @@ NVSL_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 export NVSL_ROOT
 
 nvsl_prepare_runtime_env() {
-  if [[ -f "$NVSL_ROOT/bin/libhl.so" ]]; then
+  if compgen -G "$NVSL_ROOT/bin/libhl.so*" >/dev/null; then
     export LD_LIBRARY_PATH="$NVSL_ROOT/bin${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
   fi
 
-  if [[ -f "$NVSL_ROOT/bin/libhl.dylib" ]]; then
+  if compgen -G "$NVSL_ROOT/bin/libhl*.dylib" >/dev/null; then
     export DYLD_LIBRARY_PATH="$NVSL_ROOT/bin${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}"
   fi
 

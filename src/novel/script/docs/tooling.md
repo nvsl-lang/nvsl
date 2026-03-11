@@ -52,7 +52,7 @@ cd nvsl-linux-x64
 ./nvsl run path/to/scripts --entry game.app.main
 ```
 
-That bundle includes `bin/hl`, so Linux users do not need a separate HashLink install for the packaged release.
+That bundle includes `bin/hl` plus the local `libhl.so*` runtime library files, so Linux users do not need a separate HashLink install for the packaged release.
 
 Windows release bundle flow:
 
@@ -72,7 +72,7 @@ cd nvsl-macos-x64
 ./nvsl run path/to/scripts --entry game.app.main
 ```
 
-That bundle includes `bin/hl` and `bin/libhl.dylib`, so macOS users do not need a separate HashLink install for the packaged release.
+That bundle includes `bin/hl` plus the local `libhl*.dylib` runtime library files, so macOS users do not need a separate HashLink install for the packaged release.
 
 If you already have Haxe and HashLink:
 
@@ -274,7 +274,7 @@ Purpose:
 - assemble a self-contained Linux bundle
 - include `nvsl`, `nvslc`, `nvslvm`
 - include `bin/nvslc.hl`, `bin/nvslvm.hl`
-- include `bin/hl` so the release can run without a separate HashLink install
+- include `bin/hl` and the required local `libhl.so*` runtime files so the release can run without a separate HashLink install
 
 Usage:
 

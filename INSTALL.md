@@ -72,7 +72,7 @@ The release bundle includes:
 - `nvslc`
 - `nvslvm`
 - `bin/hl`
-- `bin/libhl.so`
+- the local HashLink runtime library files under `bin/` such as `libhl.so` or `libhl.so.*`
 - `bin/nvslc.hl`
 - `bin/nvslvm.hl`
 
@@ -149,7 +149,7 @@ The macOS bundle includes:
 - `nvslc`
 - `nvslvm`
 - `bin/hl`
-- `bin/libhl.dylib`
+- the local HashLink runtime library files under `bin/` such as `libhl.dylib`
 - `bin/nvslc.hl`
 - `bin/nvslvm.hl`
 
