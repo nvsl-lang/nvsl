@@ -224,6 +224,92 @@ Example:
 std.listSet(tags, 1, "ally")
 ```
 
+### `std.random(min, max) -> Int`
+
+Returns a random integer between `min` and `max` (inclusive).
+
+Requirements:
+
+- `min` must be `Int`
+- `max` must be `Int`
+- `max >= min` at runtime
+
+### `std.randomFloat() -> Float`
+
+Returns a random float between `0.0` (inclusive) and `1.0` (exclusive).
+
+### `std.listContains(items, value) -> Bool`
+
+Checks if a list contains a specific value.
+
+Requirements:
+
+- `items` must be `List<T>`
+- `value` must be assignable to `T`
+
+Example:
+
+```txt
+std.listContains(inventory, "key")
+```
+
+### `std.listRemove(items, value) -> List<T>`
+
+Returns a new list with the first occurrence of `value` removed.
+
+Requirements:
+
+- `items` must be `List<T>`
+- `value` must be assignable to `T`
+
+Important:
+
+- this does not mutate the original list
+
+### `std.listClear(items) -> List<T>`
+
+Returns an empty list of the same type.
+
+Example:
+
+```txt
+std.listClear(inventory)
+```
+
+### `std.contains(text, search) -> Bool`
+
+Checks if a string contains a substring.
+
+Requirements:
+
+- `text` must be `String`
+- `search` must be `String`
+
+### `std.trim(text) -> String`
+
+Removes leading and trailing whitespace from a string.
+
+### `std.split(text, delimiter) -> List<String>`
+
+Splits a string into a list of strings.
+
+Requirements:
+
+- `text` must be `String`
+- `delimiter` must be `String`
+
+### `std.round(value) -> Int`
+
+Rounds a float to the nearest integer.
+
+### `std.floor(value) -> Int`
+
+Rounds a float down to the nearest integer.
+
+### `std.ceil(value) -> Int`
+
+Rounds a float up to the nearest integer.
+
 ## Purity Notes
 
 All current `std.*` functions behave like pure helpers.

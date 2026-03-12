@@ -103,4 +103,33 @@ class ScriptValueTools {
 				false;
 		};
 	}
+
+	public static function equals(left:ScriptValue, right:ScriptValue):Bool {
+		return switch [left, right] {
+			case [VVoid, VVoid]: true;
+			case [VInt(l), VInt(r)]: l == r;
+			case [VFloat(l), VFloat(r)]: l == r;
+			case [VString(l), VString(r)]: l == r;
+			case [VBool(l), VBool(r)]: l == r;
+			case [VEnum(lt, lc), VEnum(rt, rc)]: lt == rt && lc == rc;
+			case [VList(l), VList(r)]:
+				if (l.length != r.length) return false;
+				for (i in 0...l.length) {
+					if (!equals(l[i], r[i])) return false;
+				}
+				true;
+			case [VRecord(lt, lf), VRecord(rt, rf)]:
+				if (lt != rt) return false;
+				var lKeys = [for (k in lf.keys()) k];
+				var rKeys = [for (k in rf.keys()) k];
+				if (lKeys.length != rKeys.length) return false;
+				for (k in lKeys) {
+					if (!rf.exists(k) || !equals(lf.get(k), rf.get(k))) return false;
+				}
+				true;
+			case [VClosure(l), VClosure(r)]: l == r;
+			case [VBuiltin(l), VBuiltin(r)]: l == r;
+			default: false;
+		};
+	}
 }

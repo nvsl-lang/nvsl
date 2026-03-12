@@ -20,6 +20,7 @@ import novel.script.syntax.ScriptAst.ScriptUnaryOp;
 import novel.script.syntax.ScriptAst.ScriptValueDecl;
 import novel.script.syntax.ScriptSpan;
 import novel.script.runtime.ScriptExecOp;
+import novel.script.runtime.ScriptHost;
 import novel.script.project.ScriptProject.ScriptModuleInfo;
 import novel.script.project.ScriptProject.ScriptProject;
 import novel.script.project.ScriptProject.ScriptProjectInfo;
@@ -157,7 +158,7 @@ private class ScriptProjectRuntime {
 	public function callValue(value:ScriptValue, args:Array<ScriptValue>, span:ScriptSpan):ScriptValue {
 		return switch value {
 			case VBuiltin(name):
-				ScriptBuiltins.invoke(name, args, span);
+				ScriptHost.invoke(name, args, span);
 			case VClosure(closure):
 				callClosure(closure, args, span);
 			default:
@@ -834,14 +835,12 @@ private class ScriptProjectRuntime {
 			}
 		}
 
-		if (path[0] == "std") {
+		if (path.length >= 2) {
 			var builtinName = path.join(".");
 
-			if (!ScriptBuiltins.has(builtinName) || path.length != 2) {
-				throw new ScriptError("Unknown builtin '" + builtinName + "'.", span);
+			if (ScriptHost.has(builtinName)) {
+				return VBuiltin(builtinName);
 			}
-
-			return modules.get(moduleInfo.name).env.get(builtinName, span);
 		}
 
 		var moduleTarget = resolveModuleReference(moduleInfo, path);
@@ -1308,7 +1307,7 @@ class ScriptExecution {
 
 				switch callee {
 					case VBuiltin(name):
-						frame.values.push(ScriptBuiltins.invoke(name, args, moduleInfo.program.span));
+						frame.values.push(ScriptHost.invoke(name, args, moduleInfo.program.span));
 					case VClosure(closure):
 						frames.push(runtime.createExecutionFrameFromClosure(closure, args, moduleInfo.program.span));
 					default:

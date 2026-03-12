@@ -20,7 +20,18 @@ class ScriptBuiltins {
 		"std.repeat",
 		"std.join",
 		"std.listPush",
-		"std.listSet"
+		"std.listSet",
+		"std.random",
+		"std.randomFloat",
+		"std.listContains",
+		"std.listRemove",
+		"std.listClear",
+		"std.contains",
+		"std.trim",
+		"std.split",
+		"std.round",
+		"std.floor",
+		"std.ceil"
 	];
 
 	public static function installInto(env:ScriptEnv):Void {
@@ -31,6 +42,12 @@ class ScriptBuiltins {
 
 	public static function has(name:String):Bool {
 		return Lambda.has(NAMES, name);
+	}
+
+	public static function installIntoHost():Void {
+		for (name in NAMES) {
+			ScriptHost.register(name, typeCheckCall.bind(name, _, _), invoke.bind(name, _, _));
+		}
 	}
 
 	public static function typeCheckCall(name:String, argTypes:Array<ScriptType>, span:ScriptSpan):ScriptType {
@@ -130,6 +147,70 @@ class ScriptBuiltins {
 					default:
 						throw new ScriptError(name + " expects a List as its first argument.", span);
 				}
+			case "std.random":
+				expectCount(name, argTypes, 2, span);
+				expectType(name, argTypes[0], TInt, span);
+				expectType(name, argTypes[1], TInt, span);
+				TInt;
+			case "std.randomFloat":
+				expectCount(name, argTypes, 0, span);
+				TFloat;
+			case "std.listContains":
+				expectCount(name, argTypes, 2, span);
+				switch argTypes[0] {
+					case TList(itemType):
+						if (!ScriptTypeTools.isAssignable(itemType, argTypes[1])) {
+							throw new ScriptError(
+								name + " expects " + ScriptTypeTools.format(itemType)
+									+ " as its second argument, but found " + ScriptTypeTools.format(argTypes[1]) + ".",
+								span
+							);
+						}
+						TBool;
+					default:
+						throw new ScriptError(name + " expects a List as its first argument.", span);
+				}
+			case "std.listRemove":
+				expectCount(name, argTypes, 2, span);
+				switch argTypes[0] {
+					case TList(itemType):
+						if (!ScriptTypeTools.isAssignable(itemType, argTypes[1])) {
+							throw new ScriptError(
+								name + " expects " + ScriptTypeTools.format(itemType)
+									+ " as its second argument, but found " + ScriptTypeTools.format(argTypes[1]) + ".",
+								span
+							);
+						}
+						TList(itemType);
+					default:
+						throw new ScriptError(name + " expects a List as its first argument.", span);
+				}
+			case "std.listClear":
+				expectCount(name, argTypes, 1, span);
+				switch argTypes[0] {
+					case TList(_):
+						argTypes[0];
+					default:
+						throw new ScriptError(name + " expects a List.", span);
+				}
+			case "std.contains":
+				expectCount(name, argTypes, 2, span);
+				expectType(name, argTypes[0], TString, span);
+				expectType(name, argTypes[1], TString, span);
+				TBool;
+			case "std.trim":
+				expectCount(name, argTypes, 1, span);
+				expectType(name, argTypes[0], TString, span);
+				TString;
+			case "std.split":
+				expectCount(name, argTypes, 2, span);
+				expectType(name, argTypes[0], TString, span);
+				expectType(name, argTypes[1], TString, span);
+				TList(TString);
+			case "std.round" | "std.floor" | "std.ceil":
+				expectCount(name, argTypes, 1, span);
+				expectType(name, argTypes[0], TFloat, span);
+				TInt;
 			default:
 				throw new ScriptError("Unknown builtin '" + name + "'.", span);
 		};
@@ -268,6 +349,112 @@ class ScriptBuiltins {
 						var next = items.copy();
 						next[index] = args[2];
 						VList(next);
+					default:
+						throw runtimeTypeError(name, args, span);
+				}
+			case "std.random":
+				expectRuntimeCount(name, args, 2, span);
+				switch [args[0], args[1]] {
+					case [VInt(min), VInt(max)]:
+						if (max < min) {
+							throw new ScriptError(name + " expects max to be greater than or equal to min.", span);
+						}
+
+						VInt(min + Math.floor(Math.random() * (max - min + 1)));
+					default:
+						throw runtimeTypeError(name, args, span);
+				}
+			case "std.randomFloat":
+				expectRuntimeCount(name, args, 0, span);
+				VFloat(Math.random());
+			case "std.listContains":
+				expectRuntimeCount(name, args, 2, span);
+				switch args[0] {
+					case VList(items):
+						var found = false;
+
+						for (item in items) {
+							if (ScriptValueTools.equals(item, args[1])) {
+								found = true;
+								break;
+							}
+						}
+
+						VBool(found);
+					default:
+						throw runtimeTypeError(name, args, span);
+				}
+			case "std.listRemove":
+				expectRuntimeCount(name, args, 2, span);
+				switch args[0] {
+					case VList(items):
+						var next = items.copy();
+						var target = args[1];
+
+						for (i in 0...next.length) {
+							if (ScriptValueTools.equals(next[i], target)) {
+								next.splice(i, 1);
+								break;
+							}
+						}
+
+						VList(next);
+					default:
+						throw runtimeTypeError(name, args, span);
+				}
+			case "std.listClear":
+				expectRuntimeCount(name, args, 1, span);
+				switch args[0] {
+					case VList(_):
+						VList([]);
+					default:
+						throw runtimeTypeError(name, args, span);
+				}
+			case "std.contains":
+				expectRuntimeCount(name, args, 2, span);
+				switch [args[0], args[1]] {
+					case [VString(text), VString(search)]:
+						VBool(text.indexOf(search) != -1);
+					default:
+						throw runtimeTypeError(name, args, span);
+				}
+			case "std.trim":
+				expectRuntimeCount(name, args, 1, span);
+				switch args[0] {
+					case VString(text):
+						VString(StringTools.trim(text));
+					default:
+						throw runtimeTypeError(name, args, span);
+				}
+			case "std.split":
+				expectRuntimeCount(name, args, 2, span);
+				switch [args[0], args[1]] {
+					case [VString(text), VString(delimiter)]:
+						VList([for (part in text.split(delimiter)) VString(part)]);
+					default:
+						throw runtimeTypeError(name, args, span);
+				}
+			case "std.round":
+				expectRuntimeCount(name, args, 1, span);
+				switch args[0] {
+					case VFloat(value):
+						VInt(Math.round(value));
+					default:
+						throw runtimeTypeError(name, args, span);
+				}
+			case "std.floor":
+				expectRuntimeCount(name, args, 1, span);
+				switch args[0] {
+					case VFloat(value):
+						VInt(Math.floor(value));
+					default:
+						throw runtimeTypeError(name, args, span);
+				}
+			case "std.ceil":
+				expectRuntimeCount(name, args, 1, span);
+				switch args[0] {
+					case VFloat(value):
+						VInt(Math.ceil(value));
 					default:
 						throw runtimeTypeError(name, args, span);
 				}

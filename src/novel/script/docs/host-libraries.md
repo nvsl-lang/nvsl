@@ -100,10 +100,20 @@ If a host library is meant to work through both:
 
 then its call behavior should remain stable and serializable enough for the same script semantics to hold across both backends.
 
-## Recommendation For Engine Integrators
+## Implementation: ScriptHost Registry
 
-If your engine adds `vn.*`, it should be documented as:
+The `novel.script.runtime.ScriptHost` class is the central registry for all host-provided functions. You can use `ScriptHost.registerSimple` to add new APIs from your Haxe engine:
 
-- an engine host library
-- built on top of `NVSL`
-- not part of the core language specification
+```haxe
+ScriptHost.registerSimple(
+    "vn.showBg",
+    [TString], // Parameter types
+    TVoid,     // Return type
+    function(args, span) {
+        // Your implementation
+        return VVoid;
+    }
+);
+```
+
+See [embedding.md](./embedding.md) for a full guide on using the `ScriptHost` registry.

@@ -33,6 +33,7 @@ The language is intentionally small. It is not meant to become a general-purpose
 - [runtime.md](./runtime.md): parse/check/link/load flow, save/load, resume, interpreter/runtime model
 - [bytecode.md](./bytecode.md): `NVSL`, `nvslc`, `NVBC`, `nvslvm`
 - [authoring-guide.md](./authoring-guide.md): how to write scripts, what to avoid, current constraints
+- [embedding.md](./embedding.md): how to integrate the script engine into your game host
 
 ## Short Example
 

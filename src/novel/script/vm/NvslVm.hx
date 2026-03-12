@@ -11,6 +11,7 @@ import novel.script.bytecode.Nvbc.NvbcOp;
 import novel.script.bytecode.Nvbc.NvbcProgram;
 import novel.script.bytecode.NvbcCodec;
 import novel.script.runtime.ScriptBuiltins;
+import novel.script.runtime.ScriptHost;
 import novel.script.runtime.ScriptClosure;
 import novel.script.runtime.ScriptEnv;
 import novel.script.runtime.ScriptSnapshot.ScriptProjectSnapshotPayload;
@@ -353,7 +354,7 @@ class NvslVmExecution {
 				frame.ip++;
 			case CallBuiltin(name, argCount):
 				var args = runtime.popArgs(frame.values, argCount, "builtin '" + name + "'");
-				frame.values.push(ScriptBuiltins.invoke(name, args, null));
+				frame.values.push(ScriptHost.invoke(name, args, null));
 				frame.ip++;
 			case CallFunction(targetModule, name, argCount):
 				var args = runtime.popArgs(frame.values, argCount, "function '" + targetModule + "." + name + "'");
@@ -366,7 +367,7 @@ class NvslVmExecution {
 
 				switch callee {
 					case VBuiltin(name):
-						frame.values.push(ScriptBuiltins.invoke(name, args, null));
+						frame.values.push(ScriptHost.invoke(name, args, null));
 					case VClosure(closure):
 						frames.push(runtime.createExecutionFrameFromClosure(closure, args));
 					default:
@@ -657,7 +658,7 @@ private class NvslVmRuntime {
 	function callValue(value:ScriptValue, args:Array<ScriptValue>, module:NvslVmModuleInstance, contextName:String):ScriptValue {
 		return switch value {
 			case VBuiltin(name):
-				ScriptBuiltins.invoke(name, args, null);
+				ScriptHost.invoke(name, args, null);
 			case VClosure(closure):
 				executeClosure(closure, args, module, contextName);
 			default:
@@ -887,7 +888,7 @@ private class NvslVmRuntime {
 					ip++;
 				case CallBuiltin(name, argCount):
 					var args = popArgs(stack, argCount, "builtin '" + name + "'");
-					stack.push(ScriptBuiltins.invoke(name, args, null));
+					stack.push(ScriptHost.invoke(name, args, null));
 					ip++;
 				case CallFunction(targetModule, name, argCount):
 					var args = popArgs(stack, argCount, "function '" + targetModule + "." + name + "'");

@@ -28,6 +28,7 @@ import novel.script.project.ScriptProject.ScriptProjectInfo;
 import novel.script.project.ScriptProject.ScriptSourceMap;
 import novel.script.project.ScriptProject.ScriptStructInfo;
 import novel.script.runtime.ScriptBuiltins;
+import novel.script.runtime.ScriptHost;
 import novel.script.semantics.ScriptType;
 import novel.script.semantics.ScriptType.ScriptTypeTools;
 
@@ -368,7 +369,7 @@ private class ScriptProjectChecker {
 						checkCallArgs(paramTypes, argTypes, expr.span);
 						returnType;
 					case TBuiltin(name):
-						ScriptBuiltins.typeCheckCall(name, argTypes, expr.span);
+						ScriptHost.typeCheckCall(name, argTypes, expr.span);
 					default:
 						throw new ScriptError(
 							"Cannot call value of type " + ScriptTypeTools.format(calleeType) + ".",
@@ -669,18 +670,12 @@ private class ScriptProjectChecker {
 			}
 		}
 
-		if (path[0] == "std") {
+		if (path.length >= 2) {
 			var builtinName = path.join(".");
 
-			if (!ScriptBuiltins.has(builtinName)) {
-				throw new ScriptError("Unknown builtin '" + builtinName + "'.", span);
+			if (ScriptHost.has(builtinName)) {
+				return TBuiltin(builtinName);
 			}
-
-			if (path.length != 2) {
-				throw new ScriptError("Builtins do not expose nested fields.", span);
-			}
-
-			return TBuiltin(builtinName);
 		}
 
 		var moduleTarget = resolveModuleReference(moduleInfo, path);

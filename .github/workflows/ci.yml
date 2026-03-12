@@ -25,6 +25,12 @@ jobs:
       - name: Build script smoke test
         run: haxe build.script.hxml
 
+      - name: Run ScriptHost test
+        run: haxe build.test.hxml
+
+      - name: Run std library test
+        run: haxe build.stdtest.hxml
+
       - name: Build local tools
         run: ./scripts/build-tools.sh
 

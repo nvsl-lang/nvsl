@@ -18,6 +18,7 @@ import novel.script.project.ScriptProject.ScriptProjectLoader;
 import novel.script.project.ScriptProject.ScriptSourceInput;
 import novel.script.semantics.ScriptChecker;
 import novel.script.semantics.ScriptType;
+import novel.script.runtime.ScriptHost;
 import novel.script.semantics.ScriptType.ScriptTypeTools;
 import novel.script.syntax.ScriptAst.ScriptBinaryOp;
 import novel.script.syntax.ScriptAst.ScriptDecl;
@@ -362,14 +363,12 @@ private class NvslProjectCompiler {
 			}
 		}
 
-		if (path[0] == "std") {
+		if (path.length >= 2) {
 			var builtinName = path.join(".");
 
-			if (path.length != 2) {
-				throw new ScriptError("Builtins do not expose nested fields.", span);
+			if (ScriptHost.has(builtinName)) {
+				return BuiltinValue(builtinName);
 			}
-
-			return BuiltinValue(builtinName);
 		}
 
 		var localExport = moduleInfo.exports.get(path[0]);
@@ -434,11 +433,12 @@ private class NvslProjectCompiler {
 			return null;
 		}
 
-		if (path[0] == "std") {
-			if (path.length == 2) {
-				return Builtin(path.join("."));
+		if (path.length >= 2) {
+			var builtinName = path.join(".");
+
+			if (ScriptHost.has(builtinName)) {
+				return Builtin(builtinName);
 			}
-			return null;
 		}
 
 		if (path.length == 1 && moduleInfo.functions.exists(path[0])) {
