@@ -1,5 +1,3 @@
 /.deps/
 /bin/
 /dist/
-build.test.hxml
-build.stdtest.hxml
